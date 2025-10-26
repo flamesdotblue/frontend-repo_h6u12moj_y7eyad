@@ -1,49 +1,73 @@
-import React, { useState } from 'react';
-import Dashboard from './components/Dashboard.jsx';
-import Rewards from './components/Rewards.jsx';
-import Profile from './components/Profile.jsx';
-import NavigationBar from './components/NavigationBar.jsx';
+import { useState } from 'react';
+import LogoHeader from './components/LogoHeader.jsx';
+import LoginForm from './components/LoginForm.jsx';
+import AlertMessage from './components/AlertMessage.jsx';
+import FeatureHighlights from './components/FeatureHighlights.jsx';
 
 export default function App() {
-  const [tab, setTab] = useState('dashboard');
+  const [error, setError] = useState('');
+  const [isAuthed, setIsAuthed] = useState(false);
+
+  const handleLogin = ({ username, password }) => {
+    // Exact match including spaces
+    const ok = username === 'ava green' && password === 'abc 123';
+    if (ok) {
+      setIsAuthed(true);
+      setError('');
+    } else {
+      setIsAuthed(false);
+      setError('Invalid credentials. Please use username "ava green" and password "abc 123".');
+    }
+  };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700">
-      {/* Soft gradient overlay for depth without blocking interaction */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.15),transparent_60%)]" />
+    <div className="min-h-screen w-full bg-gradient-to-br from-emerald-50 via-emerald-100 to-emerald-50 text-emerald-900">
+      <div className="max-w-md mx-auto px-4 py-10">
+        <LogoHeader />
 
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {tab === 'dashboard' && <Dashboard name="Ava" />}
-        {tab === 'rewards' && <Rewards />}
-        {tab === 'profile' && <Profile />}
-        {tab === 'speak' && (
-          <div className="min-h-screen pb-28 px-4 sm:px-8 pt-8">
-            <h1 className="text-2xl sm:text-3xl font-semibold text-white mb-2">Speak</h1>
-            <p className="text-emerald-100">Practice freely and get instant feedback.</p>
-            <div className="mt-10 flex items-center justify-center">
-              <button className="relative group w-48 h-48 rounded-full grid place-items-center bg-white shadow-xl border border-white/60">
-                <div className="absolute inset-0 rounded-full bg-emerald-400/30 blur-2xl animate-pulse" />
-                <div className="relative z-10 p-7 rounded-full bg-emerald-500 text-white shadow-lg">
-                  <svg viewBox="0 0 24 24" className="w-12 h-12" fill="currentColor" aria-hidden>
-                    <path d="M12 14a4 4 0 0 0 4-4V5a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4Zm7-4a1 1 0 1 0-2 0 5 5 0 1 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V20H8a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2h-3v-3.08A7 7 0 0 0 19 10Z" />
-                  </svg>
+        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-md p-6 ring-1 ring-emerald-200 shadow-xl shadow-emerald-200/40">
+          {!isAuthed ? (
+            <>
+              <h2 className="text-xl font-semibold text-emerald-800 mb-1">Welcome back</h2>
+              <p className="text-sm text-emerald-600/80 mb-4">
+                Sign in to continue your green journey.
+              </p>
+
+              {error && (
+                <div className="mb-3">
+                  <AlertMessage type="error" message={error} />
                 </div>
-                <span className="absolute -bottom-7 text-white/90 text-sm">Hold to speak</span>
+              )}
+
+              <LoginForm onLogin={handleLogin} error={!!error} />
+            </>
+          ) : (
+            <div className="space-y-4">
+              <AlertMessage type="success" message="Signed in successfully!" />
+              <div className="rounded-xl p-4 bg-gradient-to-br from-emerald-50 to-green-50 ring-1 ring-emerald-200">
+                <h3 className="font-semibold text-emerald-800">Hello, Ava!</h3>
+                <p className="text-sm text-emerald-700/80">
+                  You’re now logged in. Explore lessons, track your streak, and earn rewards.
+                </p>
+              </div>
+              <button
+                className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-white font-semibold py-2.5 shadow-lg shadow-emerald-500/30 hover:from-emerald-600 hover:to-green-700 transition"
+                onClick={() => setIsAuthed(false)}
+              >
+                Sign out
               </button>
             </div>
-            <div className="mt-10 bg-white/70 backdrop-blur rounded-2xl p-5 border border-white/60">
-              <h2 className="text-emerald-900 font-semibold mb-2">Tips</h2>
-              <ul className="list-disc pl-5 text-emerald-800 text-sm space-y-1">
-                <li>Speak clearly and naturally.</li>
-                <li>Short sentences help with accuracy.</li>
-                <li>Every word makes you stronger.</li>
-              </ul>
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      <NavigationBar activeTab={tab} onChange={setTab} />
+        <div className="mt-8">
+          <FeatureHighlights />
+        </div>
+
+        <p className="mt-8 text-center text-xs text-emerald-600/70">
+          By continuing you agree to our Terms and Privacy Policy.
+        </p>
+      </div>
     </div>
   );
 }
