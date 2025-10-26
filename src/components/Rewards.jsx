@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Star, Trophy, Award } from 'lucide-react';
+import { Flame, Star, Trophy, Award, Info } from 'lucide-react';
 
 function generateGridData(days = 84) {
   // Create an array of performance levels: 0(min attempt),1(goal met),2(strong),3(milestone)
@@ -47,7 +47,7 @@ export default function Rewards() {
                       <div
                         key={`${week}-${day}`}
                         title={tooltip}
-                        className={`w-4 h-4 rounded-sm ${color} transition-transform hover:scale-105`}
+                        className={`w-6 h-4 rounded-sm ${color}`}
                         aria-label={tooltip}
                       />
                     );
@@ -56,7 +56,13 @@ export default function Rewards() {
               ))}
             </div>
           </div>
-          <p className="text-xs text-emerald-700 mt-3">Tip: Hover tiles to see details. Colors stay consistent — no hover color change.</p>
+          <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-emerald-800">
+            <div className="flex items-center gap-2"><span className="inline-block w-5 h-3 rounded-sm bg-emerald-100" /> Light Mint: Minimum attempt</div>
+            <div className="flex items-center gap-2"><span className="inline-block w-5 h-3 rounded-sm bg-emerald-300" /> Leaf Green: Goal met</div>
+            <div className="flex items-center gap-2"><span className="inline-block w-5 h-3 rounded-sm bg-emerald-500" /> Forest Green: Strong performance</div>
+            <div className="flex items-center gap-2"><span className="inline-block w-5 h-3 rounded-sm bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.6)]" /> Emerald Glow: Milestone day ✨</div>
+          </div>
+          <p className="text-xs text-emerald-700 mt-2">Tip: Hover tiles to see details. Colors stay consistent — no hover color change.</p>
         </section>
 
         {/* Badges + XP + Streak */}

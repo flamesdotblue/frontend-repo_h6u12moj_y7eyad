@@ -1,20 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Flame, Star, Mic, ChevronRight, CheckCircle } from 'lucide-react';
+import LearningPathsModal from './LearningPathsModal.jsx';
 
-const paths = [
+const initialPaths = [
   { title: 'Interview Preparation', progress: 42, locked: false },
   { title: 'Daily Conversations', progress: 68, locked: false },
   { title: 'Fluency Practice', progress: 23, locked: false },
   { title: 'Pronunciation Practice', progress: 10, locked: true },
 ];
 
-const weeklyGoals = [
+const initialWeeklyGoals = [
   { text: 'Speak for 5 minutes daily', done: true },
   { text: 'Maintain a 7-day streak', done: false },
   { text: 'Improve pronunciation by 5%', done: false },
 ];
 
 export default function Dashboard({ name = 'Learner' }) {
+  const [showPaths, setShowPaths] = useState(false);
+  const [weeklyGoals, setWeeklyGoals] = useState(initialWeeklyGoals);
+
+  const toggleGoal = (idx) => {
+    setWeeklyGoals((prev) =>
+      prev.map((g, i) => (i === idx ? { ...g, done: !g.done } : g))
+    );
+  };
+
   return (
     <div className="min-h-screen pb-28">
       {/* Welcome Header */}
@@ -74,12 +84,12 @@ export default function Dashboard({ name = 'Learner' }) {
         <section className="bg-white rounded-2xl p-5 shadow-lg border border-white/60">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-emerald-900">Learning Paths</h2>
-            <button className="flex items-center gap-1 text-emerald-700 text-sm">
+            <button onClick={() => setShowPaths(true)} className="flex items-center gap-1 text-emerald-700 text-sm">
               View all <ChevronRight className="w-4 h-4" />
             </button>
           </div>
           <div className="flex gap-4 overflow-x-auto pb-2">
-            {paths.map((p) => (
+            {initialPaths.map((p) => (
               <div key={p.title} className="min-w-[220px] bg-white border border-emerald-100 rounded-xl p-4 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <p className="font-medium text-emerald-900">{p.title}</p>
@@ -98,18 +108,30 @@ export default function Dashboard({ name = 'Learner' }) {
         <section className="bg-white rounded-2xl p-5 shadow-lg border border-white/60">
           <h2 className="text-lg font-semibold text-emerald-900 mb-3">Weekly Goals</h2>
           <ul className="space-y-3">
-            {weeklyGoals.map((g) => (
+            {weeklyGoals.map((g, idx) => (
               <li key={g.text} className="flex items-center gap-3">
-                <span className={`rounded-full p-1 ${g.done ? 'bg-emerald-500 text-white' : 'bg-emerald-100 text-emerald-700'}`}>
+                <button
+                  onClick={() => toggleGoal(idx)}
+                  className={`rounded-full p-1 transition-colors ${g.done ? 'bg-emerald-500 text-white' : 'bg-emerald-100 text-emerald-700'}`}
+                  aria-pressed={g.done}
+                  aria-label={`Mark ${g.text} as ${g.done ? 'incomplete' : 'done'}`}
+                >
                   <CheckCircle className="w-5 h-5" />
-                </span>
-                <span className={`text-emerald-900 ${g.done ? 'line-through opacity-70' : ''}`}>{g.text}</span>
+                </button>
+                <button
+                  onClick={() => toggleGoal(idx)}
+                  className={`text-left text-emerald-900 transition-all ${g.done ? 'line-through opacity-70' : ''}`}
+                >
+                  {g.text}
+                </button>
               </li>
             ))}
           </ul>
           <p className="text-sm text-emerald-700 mt-4">Every word makes you stronger.</p>
         </section>
       </main>
+
+      <LearningPathsModal open={showPaths} onClose={() => setShowPaths(false)} />
     </div>
   );
 }
